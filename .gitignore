@@ -8,3 +8,4 @@ reports/*
 !reports/.gitkeep
 .DS_Store
 *.log
+vulnforge/
