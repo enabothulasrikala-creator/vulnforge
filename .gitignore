@@ -1,0 +1,10 @@
+vulnforge.db
+*.pyc
+__pycache__/
+.env
+scans/*
+reports/*
+!scans/.gitkeep
+!reports/.gitkeep
+.DS_Store
+*.log

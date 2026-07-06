@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VulnForge - {% block title %}Dashboard{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+</head>
+<body class="bg-dark text-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-black border-bottom border-secondary">
+        <div class="container-fluid">
+            <a class="navbar-brand text-danger fw-bold" href="/dashboard">
+                <i class="bi bi-shield-shaded"></i> VulnForge
+            </a>
+            {% if current_user.is_authenticated %}
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/scope/list"><i class="bi bi-bullseye"></i> Scopes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/scope/new"><i class="bi bi-plus-circle"></i> New Scope</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/findings"><i class="bi bi-exclamation-triangle"></i> Findings</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/reports"><i class="bi bi-file-text"></i> Reports</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <span class="nav-link text-secondary"><i class="bi bi-building"></i> {{ current_user.name }}</span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-danger" href="/auth/logout"><i class="bi bi-box-arrow-right"></i> Logout</a>
+                    </li>
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+    </nav>
+
+    <div class="container-fluid py-3">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

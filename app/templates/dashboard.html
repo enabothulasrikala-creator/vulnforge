@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="bi bi-speedometer2"></i> Dashboard</h2>
+        <p class="text-secondary">Overview of your security posture</p>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card bg-dark border-secondary h-100">
+            <div class="card-body text-center">
+                <h1 class="text-info">{{ scopes }}</h1>
+                <p class="text-secondary mb-0">Scopes</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-dark border-secondary h-100">
+            <div class="card-body text-center">
+                <h1 class="text-primary">{{ total_scans }}</h1>
+                <p class="text-secondary mb-0">Total Scans</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-dark border-secondary h-100">
+            <div class="card-body text-center">
+                <h1 class="text-warning">{{ active_scans }}</h1>
+                <p class="text-secondary mb-0">Active Scans</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-dark border-secondary h-100">
+            <div class="card-body text-center">
+                <h1 class="{% if critical > 0 %}text-danger{% else %}text-success{% endif %}">{{ critical + high + medium + low }}</h1>
+                <p class="text-secondary mb-0">Total Findings</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card bg-dark border-secondary">
+            <div class="card-header border-secondary">
+                <h5 class="mb-0"><i class="bi bi-bar-chart"></i> Findings by Severity</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="severityChart" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card bg-dark border-secondary">
+            <div class="card-header border-secondary">
+                <h5 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Severity Breakdown</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-danger fw-bold">Critical</span>
+                    <span class="badge bg-danger">{{ critical }}</span>
+                </div>
+                <div class="progress mb-3 bg-secondary" style="height: 8px;">
+                    <div class="progress-bar bg-danger" style="width: {{ (critical / (critical + high + medium + low + 1)) * 100 }}%"></div>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-warning fw-bold">High</span>
+                    <span class="badge bg-warning text-dark">{{ high }}</span>
+                </div>
+                <div class="progress mb-3 bg-secondary" style="height: 8px;">
+                    <div class="progress-bar bg-warning" style="width: {{ (high / (critical + high + medium + low + 1)) * 100 }}%"></div>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-primary fw-bold">Medium</span>
+                    <span class="badge bg-primary">{{ medium }}</span>
+                </div>
+                <div class="progress mb-3 bg-secondary" style="height: 8px;">
+                    <div class="progress-bar bg-primary" style="width: {{ (medium / (critical + high + medium + low + 1)) * 100 }}%"></div>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-info fw-bold">Low</span>
+                    <span class="badge bg-info text-dark">{{ low }}</span>
+                </div>
+                <div class="progress mb-3 bg-secondary" style="height: 8px;">
+                    <div class="progress-bar bg-info" style="width: {{ (low / (critical + high + medium + low + 1)) * 100 }}%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if recent_findings %}
+<div class="row">
+    <div class="col-12">
+        <div class="card bg-dark border-secondary">
+            <div class="card-header border-secondary">
+                <h5 class="mb-0"><i class="bi bi-clock-history"></i> Recent Findings</h5>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-dark table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Severity</th>
+                            <th>Title</th>
+                            <th>URL</th>
+                            <th>Tool</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for f in recent_findings %}
+                        <tr>
+                            <td>
+                                {% if f.severity == 'critical' %}
+                                <span class="badge bg-danger">CRITICAL</span>
+                                {% elif f.severity == 'high' %}
+                                <span class="badge bg-warning text-dark">HIGH</span>
+                                {% elif f.severity == 'medium' %}
+                                <span class="badge bg-primary">MEDIUM</span>
+                                {% else %}
+                                <span class="badge bg-secondary">LOW</span>
+                                {% endif %}
+                            </td>
+                            <td><a href="/findings/{{ f.id }}" class="text-light">{{ f.title[:60] }}</a></td>
+                            <td class="text-secondary small">{{ f.url[:50] }}</td>
+                            <td>{{ f.tool }}</td>
+                            <td class="text-secondary small">{{ f.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+const ctx = document.getElementById('severityChart').getContext('2d');
+new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Critical', 'High', 'Medium', 'Low'],
+        datasets: [{
+            data: [{{ critical }}, {{ high }}, {{ medium }}, {{ low }}],
+            backgroundColor: ['#dc3545', '#ffc107', '#0d6efd', '#0dcaf0'],
+            borderWidth: 0
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: { color: '#adb5bd' }
+            }
+        }
+    }
+});
+</script>
+{% endblock %}

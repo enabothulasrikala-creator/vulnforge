@@ -1,0 +1,18 @@
+name: VulnForge Scheduled Scan
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run scan via SSH
+        env:
+          HOST: ${{ secrets.SCAN_HOST }}
+          KEY: ${{ secrets.SCAN_SSH_KEY }}
+        run: |
+          echo "$KEY" > key && chmod 600 key
+          ssh -i key -o StrictHostKeyChecking=no $HOST "cd ~/vulnforge && python3 -c 'from app.utils.scanner import scan_scope; scan_scope(1)'"

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Scopes{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-bullseye"></i> Your Scopes</h2>
+    <a href="/scope/new" class="btn btn-danger"><i class="bi bi-plus-circle"></i> New Scope</a>
+</div>
+
+{% if scopes %}
+<div class="row">
+    {% for scope in scopes %}
+    <div class="col-md-6 mb-3">
+        <div class="card bg-dark border-secondary h-100">
+            <div class="card-header border-secondary d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 text-danger">{{ scope.name }}</h5>
+                <form method="POST" action="/scope/{{ scope.id }}/delete" style="display:inline;" onsubmit="return confirm('Delete this scope?')">
+                    <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                </form>
+            </div>
+            <div class="card-body">
+                <p><strong>Target:</strong> <code class="text-info">{{ scope.target_url }}</code></p>
+                {% if scope.excluded_paths %}
+                <p><strong>Excluded:</strong> <span class="text-secondary">{{ scope.excluded_paths[:100] }}</span></p>
+                {% endif %}
+                <p class="text-secondary small">Created: {{ scope.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+                <a href="/scope/{{ scope.id }}" class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-eye"></i> View Details
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="text-center py-5">
+    <i class="bi bi-bullseye text-secondary" style="font-size: 4rem;"></i>
+    <h4 class="mt-3 text-secondary">No scopes defined yet</h4>
+    <p class="text-secondary">Define your first scope to start scanning</p>
+    <a href="/scope/new" class="btn btn-danger"><i class="bi bi-plus-circle"></i> Create First Scope</a>
+</div>
+{% endif %}
+{% endblock %}

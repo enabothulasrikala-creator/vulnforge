@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Generate Report{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card bg-dark border-secondary">
+            <div class="card-header border-secondary">
+                <h4 class="mb-0"><i class="bi bi-file-earmark-plus"></i> Generate Report</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">Scan Job <small class="text-secondary">(optional — leave blank for all)</small></label>
+                        <select name="scan_job_id" class="form-select bg-dark text-light border-secondary">
+                            <option value="">All Scans</option>
+                            {% for job in scan_jobs %}
+                            <option value="{{ job.id }}">#{{ job.id }} - {{ job.scope.name }} ({{ job.created_at.strftime('%Y-%m-%d') }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Format</label>
+                        <select name="format" class="form-select bg-dark text-light border-secondary">
+                            <option value="markdown">Markdown (Readable)</option>
+                            <option value="csv">CSV (Spreadsheet)</option>
+                            <option value="json">JSON (Programmatic)</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-danger w-100">
+                        <i class="bi bi-file-text"></i> Generate Report
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}{{ scope.name }}{% endblock %}
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card bg-dark border-secondary">
+            <div class="card-header border-secondary d-flex justify-content-between align-items-center">
+                <h4 class="mb-0"><i class="bi bi-bullseye text-danger"></i> {{ scope.name }}</h4>
+                <div>
+                    <a href="/scope/list" class="btn btn-sm btn-outline-secondary me-2">Back</a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Target:</strong> <code class="text-info">{{ scope.target_url }}</code></p>
+                        {% if scope.ip_ranges %}
+                        <p><strong>IP Ranges:</strong> <code>{{ scope.ip_ranges }}</code></p>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        {% if scope.excluded_paths %}
+                        <p><strong>Excluded Paths:</strong> <code>{{ scope.excluded_paths }}</code></p>
+                        {% endif %}
+                        <p><strong>Rate Limit:</strong> {{ scope.rate_limit }} req/s</p>
+                    </div>
+                </div>
+                {% if scope.policy_rules %}
+                <div class="mt-2">
+                    <strong>Policy:</strong>
+                    <pre class="text-secondary mt-1">{{ scope.policy_rules }}</pre>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card bg-dark border-secondary">
+            <div class="card-header border-secondary d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-activity"></i> Scan Jobs</h5>
+                <form method="POST" action="/dashboard" style="display:inline;">
+                    <input type="hidden" name="scope_id" value="{{ scope.id }}">
+                    <button type="submit" class="btn btn-danger btn-sm">
+                        <i class="bi bi-play-fill"></i> Start Scan
+                    </button>
+                </form>
+            </div>
+            <div class="card-body p-0">
+                {% if scan_jobs %}
+                <table class="table table-dark table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Status</th>
+                            <th>Type</th>
+                            <th>Started</th>
+                            <th>Completed</th>
+                            <th>Findings</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for job in scan_jobs %}
+                        <tr>
+                            <td>#{{ job.id }}</td>
+                            <td>
+                                {% if job.status == 'running' %}
+                                <span class="badge bg-warning text-dark">Running</span>
+                                {% elif job.status == 'completed' %}
+                                <span class="badge bg-success">Completed</span>
+                                {% elif job.status == 'pending' %}
+                                <span class="badge bg-secondary">Pending</span>
+                                {% else %}
+                                <span class="badge bg-danger">{{ job.status }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ job.scan_type }}</td>
+                            <td class="small">{{ job.started_at.strftime('%Y-%m-%d %H:%M') if job.started_at else '-' }}</td>
+                            <td class="small">{{ job.completed_at.strftime('%Y-%m-%d %H:%M') if job.completed_at else '-' }}</td>
+                            <td><a href="/findings?scope_id={{ scope.id }}" class="text-info">{{ job.findings.count() }}</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="text-center py-4">
+                    <p class="text-secondary">No scan jobs yet</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

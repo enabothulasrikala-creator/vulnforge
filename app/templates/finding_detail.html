@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}{{ finding.title[:60] }}{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card bg-dark border-secondary">
+            <div class="card-header border-secondary d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">
+                    {% if finding.severity == 'critical' %}
+                    <span class="badge bg-danger me-2">CRITICAL</span>
+                    {% elif finding.severity == 'high' %}
+                    <span class="badge bg-warning text-dark me-2">HIGH</span>
+                    {% elif finding.severity == 'medium' %}
+                    <span class="badge bg-primary me-2">MEDIUM</span>
+                    {% elif finding.severity == 'low' %}
+                    <span class="badge bg-info text-dark me-2">LOW</span>
+                    {% else %}
+                    <span class="badge bg-secondary me-2">INFO</span>
+                    {% endif %}
+                    {{ finding.title }}
+                </h4>
+                <a href="/findings" class="btn btn-sm btn-outline-secondary">Back</a>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <p><strong>CVSS Score:</strong> 
+                            {% if finding.cvss_score %}
+                            <span class="badge bg-{{ 'danger' if finding.cvss_score >= 7 else 'warning' if finding.cvss_score >= 4 else 'info' }}">
+                                {{ finding.cvss_score }}
+                            </span>
+                            {% else %}
+                            <span class="text-secondary">N/A</span>
+                            {% endif %}
+                        </p>
+                        <p><strong>Tool:</strong> <span class="badge bg-dark border">{{ finding.tool }}</span></p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Status:</strong> 
+                            <span class="badge bg-{{ 'danger' if finding.status == 'open' else 'success' if finding.status == 'fixed' else 'secondary' }}">
+                                {{ finding.status }}
+                            </span>
+                        </p>
+                        <p><strong>Discovered:</strong> {{ finding.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+                    </div>
+                </div>
+
+                {% if finding.url %}
+                <div class="mb-3">
+                    <strong>Affected URL:</strong>
+                    <pre class="text-info bg-black p-2 rounded mt-1"><code>{{ finding.url }}</code></pre>
+                </div>
+                {% endif %}
+
+                <div class="mb-3">
+                    <strong>Description:</strong>
+                    <div class="text-secondary bg-black p-3 rounded mt-1">{{ finding.description or 'No description' }}</div>
+                </div>
+
+                {% if finding.evidence %}
+                <div class="mb-3">
+                    <strong>Evidence:</strong>
+                    <pre class="text-warning bg-black p-3 rounded mt-1" style="max-height: 300px; overflow-y: auto;"><code>{{ finding.evidence }}</code></pre>
+                </div>
+                {% endif %}
+
+                {% if finding.remediation %}
+                <div class="mb-3">
+                    <strong>Remediation:</strong>
+                    <div class="text-success bg-black p-3 rounded mt-1">{{ finding.remediation }}</div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-4">
+        <div class="card bg-dark border-secondary">
+            <div class="card-header border-secondary text-center">
+                <h3><i class="bi bi-shield-shaded text-danger"></i> VulnForge</h3>
+                <p class="text-secondary mb-0">AI-Powered Continuous Security</p>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" class="form-control bg-dark text-light border-secondary" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" name="password" class="form-control bg-dark text-light border-secondary" required>
+                    </div>
+                    <button type="submit" class="btn btn-danger w-100">Login</button>
+                </form>
+                <p class="mt-3 text-center text-secondary">
+                    Don't have an account? <a href="/auth/register" class="text-danger">Register</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

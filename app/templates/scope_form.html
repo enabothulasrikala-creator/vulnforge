@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}New Scope{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card bg-dark border-secondary">
+            <div class="card-header border-secondary">
+                <h4 class="mb-0"><i class="bi bi-bullseye"></i> Define New Scope</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">Scope Name <small class="text-secondary">(e.g., "Production API" or "Main Website")</small></label>
+                        <input type="text" name="name" class="form-control bg-dark text-light border-secondary" required placeholder="e.g., Production API Scan">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Target URL <small class="text-secondary">(the main domain to scan)</small></label>
+                        <input type="url" name="target_url" class="form-control bg-dark text-light border-secondary" required placeholder="https://example.com">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">IP Ranges <small class="text-secondary">(one per line, optional)</small></label>
+                        <textarea name="ip_ranges" class="form-control bg-dark text-light border-secondary" rows="3" placeholder="192.168.1.0/24&#10;10.0.0.1"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Excluded Paths <small class="text-secondary">(paths to skip, one per line)</small></label>
+                        <textarea name="excluded_paths" class="form-control bg-dark text-light border-secondary" rows="3" placeholder="/admin&#10;/logout&#10;/wp-admin"></textarea>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Rate Limit <small class="text-secondary">(requests/second)</small></label>
+                            <input type="number" name="rate_limit" class="form-control bg-dark text-light border-secondary" value="10" min="1" max="100">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Policy Rules <small class="text-secondary">(any specific rules or constraints)</small></label>
+                        <textarea name="policy_rules" class="form-control bg-dark text-light border-secondary" rows="3" placeholder="e.g., No SQL injection testing on /api/&#10;No authentication bypass attempts&#10;Do not modify any data"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-danger w-100">
+                        <i class="bi bi-shield-check"></i> Create Scope
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
